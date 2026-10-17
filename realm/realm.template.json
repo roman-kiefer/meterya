@@ -1,0 +1,282 @@
+{
+    "realm": "meterya",
+    "enabled": true,
+    "loginTheme": "meterya",
+    "registrationAllowed": false,
+    "loginWithEmailAllowed": true,
+    "resetPasswordAllowed": true,
+    "verifyEmail": true,
+    "sslRequired": "external",
+    "bruteForceProtected": true,
+    "webAuthnPolicyRpEntityName": "meterya",
+    "webAuthnPolicyRpId": "${PUBLIC_HOST}",
+    "webAuthnPolicyUserVerificationRequirement": "required",
+    "webAuthnPolicyPasswordlessRpEntityName": "meterya",
+    "webAuthnPolicyPasswordlessRpId": "${PUBLIC_HOST}",
+    "webAuthnPolicyPasswordlessUserVerificationRequirement": "required",
+    "browserFlow": "Meterya browser",
+    "requiredActions": [
+        {
+            "alias": "UPDATE_PASSWORD",
+            "name": "Update Password",
+            "providerId": "UPDATE_PASSWORD",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 30
+        },
+        {
+            "alias": "CONFIGURE_TOTP",
+            "name": "Configure OTP",
+            "providerId": "CONFIGURE_TOTP",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 40
+        },
+        {
+            "alias": "VERIFY_EMAIL",
+            "name": "Verify Email",
+            "providerId": "VERIFY_EMAIL",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 50
+        },
+        {
+            "alias": "UPDATE_EMAIL",
+            "name": "Update Email",
+            "providerId": "UPDATE_EMAIL",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 50,
+            "config": {
+                "verify-email": "true"
+            }
+        },
+        {
+            "alias": "webauthn-register",
+            "name": "WebAuthn Register",
+            "providerId": "webauthn-register",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 51
+        },
+        {
+            "alias": "webauthn-register-passwordless",
+            "name": "WebAuthn Register Passwordless",
+            "providerId": "webauthn-register-passwordless",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 52
+        },
+        {
+            "alias": "CONFIGURE_RECOVERY_AUTHN_CODES",
+            "name": "Configure Recovery Codes",
+            "providerId": "CONFIGURE_RECOVERY_AUTHN_CODES",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 53
+        },
+        {
+            "alias": "meterya-configure-factor",
+            "name": "Choose and configure second factor",
+            "providerId": "meterya-configure-factor",
+            "enabled": true,
+            "defaultAction": false,
+            "priority": 60
+        }
+    ],
+    "attributes": {
+        "acr.loa.map": "{\"1\":1,\"2\":2}"
+    },
+    "smtpServer": {
+        "host": "${SMTP_HOST}",
+        "port": "${SMTP_PORT}",
+        "from": "${SMTP_FROM}",
+        "auth": "true",
+        "user": "${SMTP_USER}",
+        "password": "${SMTP_PASSWORD}",
+        "ssl": "false",
+        "starttls": "true"
+    },
+    "clients": [
+        {
+            "clientId": "meterya-web",
+            "enabled": true,
+            "protocol": "openid-connect",
+            "publicClient": false,
+            "secret": "${OIDC_CLIENT_SECRET}",
+            "standardFlowEnabled": true,
+            "directAccessGrantsEnabled": false,
+            "redirectUris": [
+                "${PUBLIC_ORIGIN}/auth/callback",
+                "${PUBLIC_ORIGIN}/invitations/accept*"
+            ],
+            "webOrigins": [
+                "${PUBLIC_ORIGIN}"
+            ],
+            "defaultClientScopes": [
+                "profile",
+                "email",
+                "acr"
+            ],
+            "attributes": {
+                "pkce.code.challenge.method": "S256",
+                "post.logout.redirect.uris": "${PUBLIC_ORIGIN}/"
+            }
+        },
+        {
+            "clientId": "meterya-invitations",
+            "enabled": true,
+            "protocol": "openid-connect",
+            "publicClient": false,
+            "secret": "${KEYCLOAK_SERVICE_SECRET}",
+            "serviceAccountsEnabled": true,
+            "standardFlowEnabled": false,
+            "directAccessGrantsEnabled": false
+        }
+    ],
+    "users": [
+        {
+            "username": "service-account-meterya-invitations",
+            "serviceAccountClientId": "meterya-invitations",
+            "enabled": true,
+            "clientRoles": {
+                "realm-management": [
+                    "manage-users",
+                    "query-users"
+                ]
+            }
+        }
+    ],
+    "authenticatorConfig": [
+        {
+            "alias": "Meterya level 1",
+            "config": {
+                "loa-condition-level": "1",
+                "loa-max-age": "28800"
+            }
+        },
+        {
+            "alias": "Meterya level 2",
+            "config": {
+                "loa-condition-level": "2",
+                "loa-max-age": "0"
+            }
+        }
+    ],
+    "authenticationFlows": [
+        {
+            "alias": "Meterya browser",
+            "providerId": "basic-flow",
+            "topLevel": true,
+            "builtIn": false,
+            "authenticationExecutions": [
+                {
+                    "authenticator": "auth-cookie",
+                    "requirement": "ALTERNATIVE",
+                    "priority": 10,
+                    "authenticatorFlow": false
+                },
+                {
+                    "flowAlias": "Meterya authentication",
+                    "requirement": "ALTERNATIVE",
+                    "priority": 20,
+                    "authenticatorFlow": true
+                }
+            ]
+        },
+        {
+            "alias": "Meterya authentication",
+            "providerId": "basic-flow",
+            "topLevel": false,
+            "builtIn": false,
+            "authenticationExecutions": [
+                {
+                    "flowAlias": "Meterya password",
+                    "requirement": "CONDITIONAL",
+                    "priority": 10,
+                    "authenticatorFlow": true
+                },
+                {
+                    "flowAlias": "Meterya second factor",
+                    "requirement": "CONDITIONAL",
+                    "priority": 20,
+                    "authenticatorFlow": true
+                }
+            ]
+        },
+        {
+            "alias": "Meterya password",
+            "providerId": "basic-flow",
+            "topLevel": false,
+            "builtIn": false,
+            "authenticationExecutions": [
+                {
+                    "authenticator": "conditional-level-of-authentication",
+                    "authenticatorConfig": "Meterya level 1",
+                    "requirement": "REQUIRED",
+                    "priority": 10,
+                    "authenticatorFlow": false
+                },
+                {
+                    "authenticator": "auth-username-password-form",
+                    "requirement": "REQUIRED",
+                    "priority": 20,
+                    "authenticatorFlow": false
+                }
+            ]
+        },
+        {
+            "alias": "Meterya second factor",
+            "providerId": "basic-flow",
+            "topLevel": false,
+            "builtIn": false,
+            "authenticationExecutions": [
+                {
+                    "authenticator": "conditional-level-of-authentication",
+                    "authenticatorConfig": "Meterya level 2",
+                    "requirement": "REQUIRED",
+                    "priority": 10,
+                    "authenticatorFlow": false
+                },
+                {
+                    "flowAlias": "Meterya factor choice",
+                    "requirement": "REQUIRED",
+                    "priority": 20,
+                    "authenticatorFlow": true
+                }
+            ]
+        },
+        {
+            "alias": "Meterya factor choice",
+            "providerId": "basic-flow",
+            "topLevel": false,
+            "builtIn": false,
+            "authenticationExecutions": [
+                {
+                    "authenticator": "auth-otp-form",
+                    "requirement": "ALTERNATIVE",
+                    "priority": 10,
+                    "authenticatorFlow": false
+                },
+                {
+                    "authenticator": "webauthn-authenticator-passwordless",
+                    "requirement": "ALTERNATIVE",
+                    "priority": 20,
+                    "authenticatorFlow": false
+                },
+                {
+                    "authenticator": "webauthn-authenticator",
+                    "requirement": "ALTERNATIVE",
+                    "priority": 30,
+                    "authenticatorFlow": false
+                },
+                {
+                    "authenticator": "auth-recovery-authn-code-form",
+                    "requirement": "ALTERNATIVE",
+                    "priority": 40,
+                    "authenticatorFlow": false
+                }
+            ]
+        }
+    ]
+}

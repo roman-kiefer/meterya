@@ -1,0 +1,41 @@
+{
+	servers {
+		trusted_proxies static private_ranges
+		trusted_proxies_strict
+	}
+}
+
+:8080 {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		X-Robots-Tag "noindex, nofollow, noarchive"
+	}
+
+	handle /robots.txt {
+		header Content-Type "text/plain; charset=utf-8"
+		respond <<ROBOTS
+			User-agent: *
+			Disallow: /
+			ROBOTS 200
+	}
+
+	@identity path /identity /identity/*
+	handle @identity {
+		# Block the public administration console and Admin REST API.
+		@identityAdmin path /identity/admin /identity/admin/*
+		respond @identityAdmin "Forbidden" 403
+		reverse_proxy keycloak:8080
+	}
+
+	@api path /api/* /auth/* /health/*
+	handle @api {
+		reverse_proxy api:8081
+	}
+
+	handle {
+		reverse_proxy web:8080
+	}
+}
