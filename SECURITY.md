@@ -10,11 +10,11 @@ The `latest` image tag is mutable. Include the exact release tag, source commit,
 
 Do not disclose suspected vulnerabilities in public issues, discussions, pull requests, or their attachments.
 
-**Private reporting is not enabled yet.** This policy alone does not enable GitHub Private Vulnerability Reporting. No alternative confidential email address has been published.
+**GitHub Private Vulnerability Reporting is enabled**, verified on 2026-10-24. The repository owner also confirmed that maintainer notification delivery has been verified.
 
-When enabled, use [Report a vulnerability](https://github.com/roman-kiefer/meterya/security/advisories/new) under this repository's **Security → Advisories** tab. If the form is unavailable, do not post vulnerability details publicly or use the public bug form. You may open an issue saying only that a confidential reporting channel is unavailable, without exploit details or sensitive information.
+Use [Report a vulnerability](https://github.com/roman-kiefer/meterya/security/advisories/new) under this repository's **Security → Advisories** tab. If the form is unavailable, do not post vulnerability details publicly or use the public bug form. You may open an issue saying only that a confidential reporting channel is unavailable, without exploit details or sensitive information.
 
-Reports about installation and cross-component issues belong in Meterya; backend and bundled Keycloak issues in Meterya API; web interface issues in Meterya App. If the affected component is unclear, use the private reporting channel in [Meterya](https://github.com/roman-kiefer/meterya/security/advisories/new), once available. One report with links to affected components is sufficient.
+Reports about installation and cross-component issues belong in Meterya; backend and bundled Keycloak issues in Meterya API; web interface issues in Meterya App. If the affected component is unclear, use the private reporting channel in [Meterya](https://github.com/roman-kiefer/meterya/security/advisories/new). One report with links to affected components is sufficient.
 
 Include:
 
