@@ -15,6 +15,12 @@ Meterya helps you track household energy consumption and costs. This repository 
 
 See the [full installation guide](https://meterya.com/en/installation/) for configuration details, administrator setup, updates, and backups.
 
+## Community
+
+See the [contribution guide](CONTRIBUTING.md), [security policy](SECURITY.md), and
+[accessibility information](ACCESSIBILITY.md). Please follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## License
 
 Licensed under [AGPL-3.0-only](LICENSE). Copyright (c) 2026 Meterya contributors.
